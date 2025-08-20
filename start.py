@@ -16,7 +16,7 @@ def check_requirements():
         import fastapi
         import uvicorn
         import openai
-        import python_dotenv
+        from dotenv import load_dotenv
         print("✅ 필수 패키지가 모두 설치되어 있습니다.")
         return True
     except ImportError as e:
@@ -68,14 +68,15 @@ def main():
     # 서버 시작
     try:
         import uvicorn
-        from demo_main import app
         
         uvicorn.run(
-            app,
+            "demo_main:app",
             host="0.0.0.0",
             port=8000,
             log_level="info",
-            reload=True
+            reload=True,
+            timeout_keep_alive=30,
+            timeout_graceful_shutdown=30
         )
     except KeyboardInterrupt:
         print("\n👋 서버를 종료합니다.")

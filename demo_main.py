@@ -1,10 +1,14 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 import os
 import time
 import openai
+import base64
+import uuid
+from PIL import Image
+import io
 
 from models import (
     StoryRequest, CompleteStoryResponse, Theme,
@@ -126,8 +130,8 @@ async def get_themes():
     return {"themes": themes}
 
 @app.post("/generate_complete_story", response_model=CompleteStoryResponse)
-async def generate_complete_story(request: StoryRequest):
-    """AI 기반 완전한 동화 생성"""
+async def generate_complete_story(request: StoryRequest, response: Response):
+    """AI 기반 완전한 동화 생성 (사진 분석 포함)"""
     try:
         print(f"🎯 동화 생성 시작: {request.child_profile.name}, 테마: {request.theme}")
         
@@ -138,8 +142,28 @@ async def generate_complete_story(request: StoryRequest):
                 detail="OpenAI API 키가 설정되지 않았습니다. 환경변수 OPENAI_API_KEY를 확인해주세요."
             )
         
-        # 동화 생성 서비스 호출
-        result = await openai_story_service.generate_complete_story(request)
+        # 아이 사진 분석 (업로드된 경우)
+        facial_features = None
+        if request.child_profile.photo:
+            try:
+                print(f"📸 {request.child_profile.name}의 사진 분석 중...")
+                facial_features = await openai_story_service.analyze_child_photo(
+                    request.child_profile.photo,
+                    request.child_profile.name, 
+                    request.child_profile.age,
+                    request.child_profile.gender
+                )
+                print(f"✅ 사진 분석 완료!")
+            except Exception as e:
+                print(f"⚠️ 사진 분석 실패, 기본값 사용: {str(e)}")
+                facial_features = None
+        
+        # 동화 생성 서비스 호출 (사진 분석 결과 포함)
+        result = await openai_story_service.generate_complete_story(request, facial_features)
+        
+        # 동화 생성 완료 후 연결 종료하여 timeout 방지
+        response.headers["Connection"] = "close"
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         
         print(f"🎉 동화 생성 완료: {result.story.title}")
         return result
@@ -190,6 +214,56 @@ async def generate_tts(request: TTSRequest):
         print(f"❌ 음성 생성 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=f"음성 생성 실패: {str(e)}")
 
+@app.post("/upload_photo")
+async def upload_photo(file: UploadFile = File(...)):
+    """아이 사진 업로드 API"""
+    try:
+        # 파일 타입 확인
+        if not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="이미지 파일만 업로드 가능합니다.")
+        
+        # 파일 크기 확인 (10MB 제한)
+        contents = await file.read()
+        if len(contents) > 10 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="파일 크기는 10MB 이하여야 합니다.")
+        
+        # 이미지 처리 및 리사이즈
+        try:
+            image = Image.open(io.BytesIO(contents))
+            # RGB로 변환 (RGBA나 다른 형식 호환성)
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
+            
+            # 이미지 리사이즈 (최대 1024x1024)
+            max_size = (1024, 1024)
+            image.thumbnail(max_size, Image.Resampling.LANCZOS)
+            
+            # Base64로 인코딩
+            buffer = io.BytesIO()
+            image.save(buffer, format='JPEG', quality=85)
+            image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+            image_data_url = f"data:image/jpeg;base64,{image_base64}"
+            
+            return {
+                "success": True,
+                "image_url": image_data_url,
+                "message": "사진이 성공적으로 업로드되었습니다.",
+                "file_info": {
+                    "original_filename": file.filename,
+                    "content_type": "image/jpeg",
+                    "size": len(contents)
+                }
+            }
+            
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"이미지 처리 중 오류가 발생했습니다: {str(e)}")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ 사진 업로드 실패: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"파일 업로드 중 오류가 발생했습니다: {str(e)}")
+
 @app.get("/health")
 async def health_check():
     """서비스 상태 확인"""
@@ -221,7 +295,8 @@ async def health_check():
             "AI 일러스트레이션",
             "TTS 음성 지원",
             "6개 장면 구성",
-            "5가지 교육 테마"
+            "5가지 교육 테마",
+            "사진 업로드 지원"
         ]
     }
 
