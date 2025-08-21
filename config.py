@@ -8,7 +8,7 @@ class Settings:
     HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")  # Hugging Face API 키
     
     # TTS 설정
-    TTS_VOICE = "alloy"  # OpenAI TTS voice options: alloy, echo, fable, onyx, nova, shimmer
+    TTS_VOICE = "nova"  # OpenAI TTS voice options: alloy, echo, fable, onyx, nova, shimmer
     TTS_MODEL = "tts-1"
     
     # 이미지 생성 설정

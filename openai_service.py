@@ -372,7 +372,7 @@ IMPORTANT: The main character must look exactly the same as in the reference ima
             
             response = client.audio.speech.create(
                 model="tts-1",
-                voice="alloy",  # 아이들에게 적합한 목소리
+                voice=settings.TTS_VOICE,  # 설정에서 가져온 목소리
                 input=text
             )
             
