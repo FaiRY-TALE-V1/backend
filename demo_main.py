@@ -76,7 +76,8 @@ async def get_themes():
             "keywords": ["건강", "영양", "균형"],
             "color": "from-green-400 to-emerald-600",
             "bgColor": "bg-green-50",
-            "examples": ["🥬 채소 친구들의 모험", "🍎 과일 왕국 여행", "🥛 우유와 칼슘 요정"]
+            "examples": ["🥬 채소 친구들의 모험", "🍎 과일 왕국 여행", "🥛 우유와 칼슘 요정"],
+            "imgUrl": "https://fairytaletheme.s3.ap-northeast-2.amazonaws.com/free-icon-healthy-eating-2934108.png",
         },
         {
             "value": "friendship_skills",
@@ -88,7 +89,8 @@ async def get_themes():
             "keywords": ["우정", "화해", "소통"],
             "color": "from-blue-400 to-sky-600",
             "bgColor": "bg-blue-50",
-            "examples": ["🌈 화해의 무지개", "🎭 새친구 환영 파티", "🤲 마음을 나누는 다리"]
+            "examples": ["🌈 화해의 무지개", "🎭 새친구 환영 파티", "🤲 마음을 나누는 다리"],
+            "imgUrl": "https://fairytaletheme.s3.ap-northeast-2.amazonaws.com/free-icon-friends-1141102.png",
         },
         {
             "value": "safety_habits",
@@ -100,7 +102,8 @@ async def get_themes():
             "keywords": ["안전", "조심", "보호"],
             "color": "from-red-400 to-orange-600",
             "bgColor": "bg-red-50",
-            "examples": ["🚦 신호등 친구의 가르침", "👮 안전 경찰관과 모험", "🏠 우리 집 안전 점검"]
+            "examples": ["🚦 신호등 친구의 가르침", "👮 안전 경찰관과 모험", "🏠 우리 집 안전 점검"],
+            "imgUrl": "https://fairytaletheme.s3.ap-northeast-2.amazonaws.com/free-icon-safety-3896338.png",
         },
         {
             "value": "financial_literacy",
@@ -112,7 +115,8 @@ async def get_themes():
             "keywords": ["저축", "계획", "현명함"],
             "color": "from-yellow-400 to-amber-600",
             "bgColor": "bg-yellow-50",
-            "examples": ["🐷 저금통 돼지의 여행", "💎 보물섬의 지혜", "🏪 꼬마 상인의 이야기"]
+            "examples": ["🐷 저금통 돼지의 여행", "💎 보물섬의 지혜", "🏪 꼬마 상인의 이야기"],
+            "imgUrl": "https://fairytaletheme.s3.ap-northeast-2.amazonaws.com/free-icon-money-8700923.png",
         },
         {
             "value": "emotional_intelligence",
@@ -124,7 +128,8 @@ async def get_themes():
             "keywords": ["감정", "공감", "소통"],
             "color": "from-pink-400 to-rose-600",
             "bgColor": "bg-pink-50",
-            "examples": ["😊 감정 요정들의 여행", "🤗 마음을 나누는 숲", "💕 위로의 마법사"]
+            "examples": ["😊 감정 요정들의 여행", "🤗 마음을 나누는 숲", "💕 위로의 마법사"],
+            "imgUrl": "https://fairytaletheme.s3.ap-northeast-2.amazonaws.com/free-icon-emotions-5377629.png",
         }
     ]
     return {"themes": themes}
