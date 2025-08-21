@@ -3,22 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 import os
-import time
-import openai
 import base64
-import uuid
 from PIL import Image
 import io
 
 from models import (
-    StoryRequest, CompleteStoryResponse, Theme,
-    TTSRequest, TTSResponse
+    StoryRequest, CompleteStoryResponse
 )
 from openai_service import openai_story_service
 from config import settings
-
-# OpenAI 클라이언트 초기화
-client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
 # FastAPI 앱 생성
 app = FastAPI(
@@ -174,45 +167,6 @@ async def generate_complete_story(request: StoryRequest, response: Response):
         print(f"❌ 동화 생성 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=f"동화 생성 중 오류가 발생했습니다: {str(e)}")
 
-@app.post("/generate_tts", response_model=TTSResponse)
-async def generate_tts(request: TTSRequest):
-    """OpenAI TTS를 사용한 음성 생성"""
-    try:
-        if not settings.OPENAI_API_KEY:
-            raise HTTPException(
-                status_code=500,
-                detail="OpenAI API 키가 설정되지 않았습니다."
-            )
-        
-        print(f"🔊 장면 {request.scene_number} 음성 생성 중...")
-        
-        # OpenAI TTS API 호출
-        response = client.audio.speech.create(
-            model=settings.TTS_MODEL,
-            voice=settings.TTS_VOICE,
-            input=request.text
-        )
-        
-        # 음성 파일 저장
-        import uuid
-        audio_filename = f"scene_{request.scene_number}_{uuid.uuid4().hex[:8]}.mp3"
-        audio_path = os.path.join(settings.AUDIO_DIR, audio_filename)
-        
-        with open(audio_path, "wb") as audio_file:
-            audio_file.write(response.content)
-        
-        audio_url = f"/static/audio/{audio_filename}"
-        
-        print(f"✅ 장면 {request.scene_number} 음성 생성 완료")
-        
-        return TTSResponse(
-            audio_url=audio_url,
-            scene_number=request.scene_number
-        )
-        
-    except Exception as e:
-        print(f"❌ 음성 생성 실패: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"음성 생성 실패: {str(e)}")
 
 @app.post("/upload_photo")
 async def upload_photo(file: UploadFile = File(...)):

@@ -8,7 +8,7 @@ class Settings:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     
     # TTS 설정
-    TTS_VOICE = "nova"
+    TTS_VOICE = "nova"  # OpenAI TTS voice options: alloy, echo, fable, onyx, nova, shimmer
     TTS_MODEL = "tts-1"
     
     # 이미지 생성 설정
@@ -17,7 +17,7 @@ class Settings:
     IMAGE_QUALITY = "standard"
     
     # 스토리 생성 설정
-    STORY_MODEL = "gpt-4o"
+    STORY_MODEL = "gpt-4o"  # GPT-4o 모델 사용
     MAX_SCENES = 6
     
     # 추가 고급 설정

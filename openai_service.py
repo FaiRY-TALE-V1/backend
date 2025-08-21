@@ -1,6 +1,5 @@
 import openai
 import os
-import uuid
 import time
 import json
 from typing import Dict, Any

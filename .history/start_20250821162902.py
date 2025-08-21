@@ -58,11 +58,11 @@ def main():
     if not check_env_file():
         return
     
-    print("서버를 시작합니다...")
-    print("서버 주소: http://localhost:8000")
-    print("API 문서: http://localhost:8000/docs")
-    print("OpenAI API 사용")
-    print("이미지 생성 제어: GENERATE_IMAGES=true/false")
+    print("🚀 서버를 시작합니다...")
+    print("📍 서버 주소: http://localhost:8000")
+    print("📚 API 문서: http://localhost:8000/docs")
+    print("🔑 OpenAI API 사용")
+    print("💰 이미지 생성 제어: GENERATE_IMAGES=true/false")
     print("=" * 50)
     
     # 서버 시작
@@ -79,9 +79,9 @@ def main():
             timeout_graceful_shutdown=30
         )
     except KeyboardInterrupt:
-        print("\n서버를 종료합니다.")
+        print("\n👋 서버를 종료합니다.")
     except Exception as e:
-        print(f"서버 시작 실패: {e}")
+        print(f"❌ 서버 시작 실패: {e}")
 
 if __name__ == "__main__":
     main()
