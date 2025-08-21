@@ -8,6 +8,7 @@ from config import settings
 from models import (
     StoryRequest, Story, StoryScene, CompleteStoryResponse
 )
+from typing import Tuple
 
 # OpenAI 클라이언트 초기화
 client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -283,7 +284,7 @@ CONSISTENT CHARACTER STYLE GUIDE for {child_name}:
             print(f"❌ GPT-4o-mini 스토리 생성 실패: {str(e)}")
             raise e
     
-    async def generate_image_with_dalle3(self, image_prompt: str, scene_number: int, reference_gen_id: str = None) -> tuple[str, str]:
+    async def generate_image_with_dalle3(self, image_prompt: str, scene_number: int, reference_gen_id: str = None) -> Tuple[str, str]:
         """DALL-E 3를 사용한 이미지 생성 (gen_id 기반 일관성)"""
         try:
             print(f"🎨 DALL-E 3로 장면 {scene_number} 이미지 생성 중...")
